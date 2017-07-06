@@ -99,6 +99,7 @@ class Preferences(tk.Toplevel):
         self.data["bg"].set(self.cnf["STYLE"]["bg"])
 
     def get_fonts(self):
+        """ retrieves available fonts using tk """
         self.data["fonts"] = tkfont.families()
         self.data["fonts"] = sorted(self.data["fonts"])
         self.list.insert(0, *self.data["fonts"])
@@ -502,3 +503,5 @@ if __name__ == '__main__':
     app = Pen(window)
     app.pack(fill=tk.BOTH, expand=1)
     window.mainloop()
+
+
