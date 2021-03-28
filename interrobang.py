@@ -213,13 +213,13 @@ class Pen(tk.Frame):
         super().__init__(parent)
         self.parent = parent
         self.mode = "window"
-        self.filename = "temp"
         self.cur_word = ""
         self.data = {}
 
         self.windows = {}
         self.cnf = configparser.ConfigParser()
         self.load_config()
+        self.filename = self.cnf["FILE"]["last"]
 
         self.paper = tk.Text(self, wrap=tk.WORD)
         font = (
@@ -243,6 +243,8 @@ class Pen(tk.Frame):
         self.show_menus()
         self.set_hotkeys()
 
+        self.load_file()
+
     def show_menus(self):
         """ defines the menus ... """
 
@@ -251,6 +253,7 @@ class Pen(tk.Frame):
         filemenu.add_command(label=M.MENU_NEW, command=self.new_file)
         filemenu.add_command(label=M.MENU_OPEN, command=self.open_file)
         filemenu.add_command(label=M.MENU_SAVE, command=self.save_file)
+        filemenu.add_command(label=M.MENU_SAVE_AS, command=self.save_as_dialog)
         filemenu.add_command(label=M.MENU_PREFS, command=self.show_prefs)
         filemenu.add_command(label=M.MENU_EXIT)
         self.menubar.add_cascade(label=M.MENU_FILE, menu=filemenu)
@@ -259,6 +262,8 @@ class Pen(tk.Frame):
     def set_hotkeys(self):
         self.parent.bind("<Control-n>", self.new_file)
         self.parent.bind("<Control-s>", self.save_file)
+        self.parent.bind("<Control-Shift-s>", self.save_as_dialog)
+        self.parent.bind("<Control-+>", self.save_incremental)
         self.parent.bind("<Control-o>", self.open_file)
         self.parent.bind("<Control-f>", self.show_searchbox)
         self.parent.bind("<Control-p>", self.printer)
@@ -280,6 +285,9 @@ class Pen(tk.Frame):
 
     def open_file(self, event=None):
         self.filename = tkfd.askopenfilename()
+        self.load_file()
+
+    def load_file(self):
         if self.filename:
             file = open(self.filename, mode="rb")
             data = file.read()
@@ -290,7 +298,7 @@ class Pen(tk.Frame):
             except UnicodeDecodeError:
                 decoded = data.decode("cp1252")
 
-            self.paper.delete(0.0,tk.END)
+            self.paper.delete(0.0, tk.END)
             self.paper.insert(0.0, decoded)
 
     def update_view(self):
@@ -310,14 +318,21 @@ class Pen(tk.Frame):
         )
         self.config(bg=self.cnf["STYLE"]["bg"])
 
-
     def save_file(self, event=None):
-        self.filename = tkfd.asksaveasfilename()
         if self.filename:
             self.data = self.paper.get(0.0, tk.END)
-            file = open(self.filename, mode="w", encoding="utf-8")
-            file.write(self.data)
-            file.close()
+            with open(self.filename, mode="w", encoding="utf-8") as file:
+                file.write(self.data)
+                self.cnf["FILE"]["last"] = self.filename
+                self.write_config()
+
+
+    def save_as_dialog(self, event=None):
+        self.filename = tkfd.asksaveasfilename()
+        self.save_file(self)
+
+    def save_incremental(self, event=None):
+        print(self.filename)
 
     def load_config(self):
         self.cnf.sections()
@@ -331,7 +346,14 @@ class Pen(tk.Frame):
             "size": "12",
             "width": "60"
         }
+        self.cnf["FILE"] = {
+            "last": "temp"
+        }
         self.cnf.read("config.ini")
+
+    def write_config(self):
+        with open("config.ini", mode="w", encoding="utf-8") as config_file:
+            self.cnf.write(config_file)
 
     def toggle_full_screen(self, event=None):
         """ switch between fullscreen and window mode """

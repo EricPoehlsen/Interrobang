@@ -3,6 +3,7 @@ class DE(object):
     MENU_NEW = "Neu"
     MENU_OPEN = "Öffnen"
     MENU_SAVE = "Speichern"
+    MENU_SAVE_AS = "Speicher als ..."
     MENU_PREFS = "Einstellungen"
     MENU_EXIT = "Beenden"
 
