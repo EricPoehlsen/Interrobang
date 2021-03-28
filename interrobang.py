@@ -4,6 +4,7 @@ import tkinter.filedialog as tkfd
 from tkinter import messagebox
 from language_strings import DE as M
 import configparser
+from preferences import Preferences
 
 import win32api
 import win32print
@@ -278,10 +279,11 @@ class Pen(tk.Frame):
             self.cur_word = ""
         else: self.cur_word += event.char
 
-        if self.cur_word == '"':
-            line, pos = self.paper.index(tk.INSERT).split(".")
-            pos = int(pos)
+        line, pos = self.paper.index(tk.INSERT).split(".")
+        pos = int(pos)
 
+        # " to » and «
+        if self.cur_word == '"':
             first = line + "." + str(pos-1)
             last = line + "." + str(pos)
 
@@ -289,9 +291,6 @@ class Pen(tk.Frame):
             self.paper.insert(first, "»")
             self.cur_word = ""
         elif self.cur_word.endswith('"'):
-            line, pos = self.paper.index(tk.INSERT).split(".")
-            pos = int(pos)
-
             first = line + "." + str(pos-1)
             last = line + "." + str(pos)
 
@@ -299,32 +298,25 @@ class Pen(tk.Frame):
             self.paper.insert(first, "«")
             self.cur_word = ""
 
-        if self.cur_word == "'":
-            line, pos = self.paper.index(tk.INSERT).split(".")
-            pos = int(pos)
-
-            first = line + "." + str(pos-1)
+        # '' to › and ‹
+        if self.cur_word == "''":
+            first = line + "." + str(pos-2)
             last = line + "." + str(pos)
 
             self.paper.delete(first, last)
             self.paper.insert(first, "›")
             self.cur_word = ""
-        elif self.cur_word.endswith("'"):
-            line, pos = self.paper.index(tk.INSERT).split(".")
-            pos = int(pos)
-
-            first = line + "." + str(pos-1)
+        elif self.cur_word.endswith("''"):
+            first = line + "." + str(pos-2)
             last = line + "." + str(pos)
 
             self.paper.delete(first, last)
             self.paper.insert(first, "‹")
             self.cur_word = ""
 
+        # Interrobang
         if len(self.cur_word) > 1 and self.cur_word.endswith("!"):
             if self.cur_word[-2] == "?":
-                line, pos = self.paper.index(tk.INSERT).split(".")
-                pos = int(pos)
-
                 first = line + "." + str(pos - 2)
                 last = line + "." + str(pos)
 
@@ -332,11 +324,9 @@ class Pen(tk.Frame):
                 self.paper.insert(first, "‽")
                 self.cur_word = "."
 
+        # -- to Dash
         if len(self.cur_word) > 1 and self.cur_word.endswith("-"):
             if self.cur_word[-2] == "-":
-                line, pos = self.paper.index(tk.INSERT).split(".")
-                pos = int(pos)
-
                 first = line + "." + str(pos - 2)
                 last = line + "." + str(pos)
 
