@@ -1,4 +1,6 @@
 class DE(object):
+    APP_NAME = "Interrobang‽"
+
     MENU_FILE = "Datei"
     MENU_NEW = "Neu"
     MENU_OPEN = "Öffnen"
@@ -17,5 +19,8 @@ class DE(object):
     PREFS_TEST = "The quick brown fox jumped ofer the lazy dog."
     PREFS_OK = "Speichern"
     PREFS_CANCEL = "Abbrechen"
+
+    ERROR = "Fehler!"
+    E_FILE_EXISTS = "Speichern fehlgeschlagen!\nNächste Dateinummer existiert bereits.\nBitte Datei manuell speichern."
 
     SEARCH_TITLE = "Suche ..."

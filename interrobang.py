@@ -1,7 +1,9 @@
+import os
 import tkinter as tk
 import tkinter.font as tkfont
 import tkinter.filedialog as tkfd
 import tkinter.colorchooser as tkcolor
+from tkinter import messagebox
 from language_strings import DE as M
 import configparser
 import re
@@ -282,6 +284,7 @@ class Pen(tk.Frame):
     def new_file(self, event=None):
         self.paper.delete(0.0,tk.END)
         self.filename = "temp"
+        self.update_title()
 
     def open_file(self, event=None):
         self.filename = tkfd.askopenfilename()
@@ -302,6 +305,7 @@ class Pen(tk.Frame):
                 decoded = ""
             self.paper.delete(0.0, tk.END)
             self.paper.insert(0.0, decoded)
+            self.update_title()
 
     def update_view(self):
         font = (
@@ -320,6 +324,12 @@ class Pen(tk.Frame):
         )
         self.config(bg=self.cnf["STYLE"]["bg"])
 
+    def update_title(self):
+        if self.filename != "temp":
+            self.parent.title(M.APP_NAME + " - " + self.filename)
+        else:
+            self.parent.title(M.APP_NAME)
+
     def save_file(self, event=None):
         if self.filename:
             self.data = self.paper.get(0.0, tk.END)
@@ -327,14 +337,27 @@ class Pen(tk.Frame):
                 file.write(self.data)
                 self.cnf["FILE"]["last"] = self.filename
                 self.write_config()
-
+                self.update_title()
 
     def save_as_dialog(self, event=None):
         self.filename = tkfd.asksaveasfilename()
         self.save_file(self)
 
     def save_incremental(self, event=None):
-        print(self.filename)
+        name, ext = os.path.splitext(self.filename)
+        name, num = os.path.splitext(name)
+        if num:
+            num = num[1::]
+            num = int(num) + 1
+            num = "." + str(num)
+        else:
+            num = ".1"
+        new_filename = name + num + ext
+        if (os.path.exists(new_filename)):
+            messagebox.showerror(M.ERROR,M.E_FILE_EXISTS)
+        else:
+            self.filename = new_filename
+            self.save_file()
 
     def load_config(self):
         self.cnf.sections()
