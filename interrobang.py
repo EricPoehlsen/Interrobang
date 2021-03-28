@@ -289,15 +289,17 @@ class Pen(tk.Frame):
 
     def load_file(self):
         if self.filename:
-            file = open(self.filename, mode="rb")
-            data = file.read()
-            file.close()
-
             try:
-                decoded = data.decode("utf-8")
-            except UnicodeDecodeError:
-                decoded = data.decode("cp1252")
-
+                file = open(self.filename, mode="rb")
+                data = file.read()
+                file.close()
+                try:
+                    decoded = data.decode("utf-8")
+                except UnicodeDecodeError:
+                    decoded = data.decode("cp1252")
+            except FileNotFoundError:
+                self.filename = "temp"
+                decoded = ""
             self.paper.delete(0.0, tk.END)
             self.paper.insert(0.0, decoded)
 
