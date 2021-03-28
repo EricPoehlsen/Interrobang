@@ -34,6 +34,7 @@ class Preferences(tk.Toplevel):
         self.list.pack(fill=tk.BOTH)
         list_frame.pack(side=tk.LEFT)
 
+        self.data["width"] = tk.StringVar()
         self.data["bold"] = tk.IntVar()
         self.data["bold"].trace("w", lambda n, e, m: self.set_font())
         self.data["italic"] = tk.IntVar()
@@ -46,10 +47,17 @@ class Preferences(tk.Toplevel):
         self.data["bg"].trace("w", lambda n, e, m: self.set_color("bg"))
 
         frame = tk.Frame(self.font_frame)
+
+
+        width_frame = tk.LabelFrame(frame, text=M.PREFS_WIDTH)
+        self.data["width_entry"] = tk.Entry(width_frame, textvariable=self.data["width"])
+        self.data["width_entry"].pack(fill=tk.X)
+        width_frame.pack(fill=tk.X)
+
         size_frame = tk.LabelFrame(frame, text=M.PREFS_SIZE)
-        self.data["fg_entry"] = tk.Entry(size_frame, textvariable=self.data["size"])
-        self.data["fg_entry"].pack()
-        size_frame.pack()
+        self.data["size_entry"] = tk.Entry(size_frame, textvariable=self.data["size"])
+        self.data["size_entry"].pack(fill=tk.X)
+        size_frame.pack(fill=tk.X)
 
         bold = tk.Checkbutton(frame, variable=self.data["bold"], text=M.PREFS_BOLD)
         bold.pack()
@@ -96,6 +104,7 @@ class Preferences(tk.Toplevel):
         # load current values
         self.data["bold"].set(int(self.cnf["STYLE"]["bold"]))
         self.data["italic"].set(int(self.cnf["STYLE"]["italic"]))
+        self.data["width"].set(int(self.cnf["STYLE"]["width"]))
         self.data["size"].set(int(self.cnf["STYLE"]["size"]))
         self.data["fg"].set(self.cnf["STYLE"]["fg"])
         self.data["bg"].set(self.cnf["STYLE"]["bg"])
@@ -181,6 +190,10 @@ class Preferences(tk.Toplevel):
 
     def save(self):
         """ recheck all values and write the config """
+        width = int(self.data["width"].get())
+        if width > 0:
+            self.cnf["STYLE"]["width"] = str(width)
+
         size = int(self.data["size"].get())
         if 0 < size < 100:
             self.cnf["STYLE"]["size"] = str(self.data["size"].get())
@@ -235,7 +248,7 @@ class Pen(tk.Frame):
             fg=self.cnf["STYLE"]["fg"],
             border=0,
             font=font,
-            width=48,
+            width=self.cnf["STYLE"]["width"],
             height=18
         )
         self.paper.bind("<KeyRelease>", self.auto_replace)
@@ -319,7 +332,7 @@ class Pen(tk.Frame):
             fg=self.cnf["STYLE"]["fg"],
             border=0,
             font=font,
-            width=48,
+            width=self.cnf["STYLE"]["width"],
             height=18
         )
         self.config(bg=self.cnf["STYLE"]["bg"])

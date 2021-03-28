@@ -10,6 +10,7 @@ class DE(object):
     MENU_EXIT = "Beenden"
 
     PREFS_FONTS = "Schriftart"
+    PREFS_WIDTH = "Zeilenlänge"
     PREFS_SIZE = "Schriftgröße"
     PREFS_BOLD = "fett"
     PREFS_ITALIC = "kursiv"
@@ -19,6 +20,7 @@ class DE(object):
     PREFS_TEST = "The quick brown fox jumped ofer the lazy dog."
     PREFS_OK = "Speichern"
     PREFS_CANCEL = "Abbrechen"
+
 
     ERROR = "Fehler!"
     E_FILE_EXISTS = "Speichern fehlgeschlagen!\nNächste Dateinummer existiert bereits.\nBitte Datei manuell speichern."
