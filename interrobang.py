@@ -165,8 +165,8 @@ class Pen(tk.Frame):
         self.cnf.sections()
         self.cnf["CORE"] = {"geometry": ""}
         self.cnf["STYLE"] = {
-            "fg": "#000000",
-            "bg": "#ffffff",
+            "fg": "#00dd00",
+            "bg": "#000000",
             "font": "Arial",
             "bold": "0",
             "italic": "0",
