@@ -6,9 +6,6 @@ from language_strings import DE as M
 import configparser
 from preferences import Preferences
 
-import win32api
-import win32print
-
 
 class Pen(tk.Frame):
     """ Create a Frame that holds the main application"""
@@ -67,7 +64,7 @@ class Pen(tk.Frame):
         self.parent.bind("<Control-n>", self.new_file)
         self.parent.bind("<Control-s>", self.save_file)
         self.parent.bind("<Control-Shift-s>", self.save_as_dialog)
-        self.parent.bind("<Control-+>", self.save_incremental)
+        self.parent.bind("<Control-plus>", self.save_incremental)
         self.parent.bind("<Control-o>", self.open_file)
         self.parent.bind("<Control-f>", self.show_searchbox)
         self.parent.bind("<Control-p>", self.printer)
